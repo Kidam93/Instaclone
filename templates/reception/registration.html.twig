@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+    <h1 class="mt-4">Inscrivez-vous !</h1>
+        <form class="mt-4" action="" method="post">
+            <div class="form-group">
+                <label>Votre pseudo</label>
+                <input type="text" class="form-control" name="username">
+                {# {% if errors.username %}
+                <div class="alert alert-danger mt-2">
+                {{ errors.username }}
+                </div>
+                {% endif %} #}
+            </div>
+            <div class="form-group">
+                <label>Votre email</label>
+                <input type="text" class="form-control" name="email">
+                {# {% if errors.email %}
+                <div class="alert alert-danger mt-2">
+                {{ errors.email }}
+                </div>
+                {% endif %} #}
+            </div>
+            {% if errors %}
+            <div class="alert alert-danger mt-2">
+            <p>Pseudo ou email deja pris</p>
+            </div>
+            {% endif %}
+            <div class="form-group">
+                <label>Votre mot de passe</label>
+                <input type="text" class="form-control" name="password">
+            </div>
+            <div class="form-group">
+                <label>Confirmer mot de passe</label>
+                <input type="text" class="form-control" name="password_confirmed">
+            </div>
+            <button class="btn btn-primary">S'inscrire</a>
+        </form>
+    </div>
+    <div class="container">
+    {% if messages %}
+    <div class="alert alert-danger mt-4">
+    <p>Formulaire incorrecte</p>
+        {% for message in messages %}
+        <ul>
+            <li>{{ message }}</li>
+        </ul>
+        {% endfor %}
+    </div>
+    {% endif %}
+    </div>
+{% endblock %}
