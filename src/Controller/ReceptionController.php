@@ -41,4 +41,42 @@ class ReceptionController extends AbstractController{
             'errors' => $notUser
         ]);
     }
+
+    /**
+     * @Route("/login", name="index.login")
+     */
+    public function login(Request $request, UserRepository $repository){
+        $username = $request->request->get('username');
+        $password = $request->request->get('password');
+        $idBDD = $repository->findIdUsername($username);
+        $usernameBDD = $repository->findUsername($username);
+        $hashBDD = $repository->findPassword($username);
+        $encoded = password_verify($password, $hashBDD);
+        if($_POST){
+            if($username === $usernameBDD && $encoded === true){
+                if(session_status() === PHP_SESSION_NONE){
+                    session_start();
+                }
+                $_SESSION['id'] = $idBDD;
+                return $this->redirectToRoute("homeprofil");
+            }else{
+                if(!empty($_SESSION['id'])){
+                    session_destroy();
+                }
+                return $this->redirectToRoute("index.login");
+            }
+        }
+        return $this->render("reception/connexion.html.twig", [
+            
+        ]);
+    }
+
+    /**
+     * @Route("/deconnexion", name="index.disconnected")
+     */
+    public function logout(){
+        session_start();
+        $_SESSION['id'] = null;
+        return $this->redirectToRoute("index.registration");
+    }
 }

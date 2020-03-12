@@ -25,8 +25,13 @@ class ProfilController extends AbstractController{
         $profilToken = $repository->findToken($token);
         if((int)$id === $profilId && $token === $profilToken){
             $this->session->set('id', $profilId);
+            if(session_status() === PHP_SESSION_NONE){
+                session_start();
+            }
+            $_SESSION['id'] = $id;
             return $this->redirectToRoute("homeprofil");
         }else{
+            session_destroy();
             return $this->redirectToRoute("index.registration");
         }
     }
@@ -35,12 +40,16 @@ class ProfilController extends AbstractController{
      * @Route("/user", name="homeprofil")
      */
     public function homeProfil(UserRepository $repository){
-        $data = $this->session->get('id');
-        $user = $repository->findUser($data)[0];
-
-        $id = $user->getId();
-        $username = $user->getUsername();
-        $created = $user->getCreatedAt();
+        if(session_status() === PHP_SESSION_NONE){
+            session_start();
+        }
+        $data = $_SESSION['id'] ?? null;
+        $username = $repository->findUsernameProfil($data);
+        $created = $repository->findCreatedAtProfil($data);
+        if(!$data){
+            session_destroy();
+            return $this->redirectToRoute("index.registration");
+        }
         return $this->render("profil/homeprofil.html.twig", [
             'username' => $username,
             'created' => $created

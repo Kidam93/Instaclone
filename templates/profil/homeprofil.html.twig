@@ -26,7 +26,7 @@
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                <a class="nav-link" href="{{ path('index.disconnected') }}" tabindex="-1" aria-disabled="true">Deconnexion</a>
             </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
@@ -41,7 +41,7 @@
                 <h2>{{ username }}</h2>
             </div>
             <div class="">
-                <p><strong>{{ created|date("m/d/Y") }}</strong></p>
+                <p><strong>{{ created|date("d/m/Y") }}</strong></p>
             </div>
         </div>
         <div class="my-3 p-3 bg-white rounded shadow-sm">

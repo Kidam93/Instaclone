@@ -48,14 +48,46 @@ class UserRepository extends ServiceEntityRepository
     }
     */
 
-    public function findUsername($value)
+    public function findIdUsername($value)
     {
-        return $this->createQueryBuilder('u')
+        $query = $this->createQueryBuilder('u')
             ->andWhere('u.username = :val')
             ->setParameter('val', $value)
-            ->getQuery()
-            ->getResult()
-        ;
+            ->getQuery();
+
+        if(empty($query->getResult())){
+            return null;
+        }else{
+            return $query->getResult()[0]->getId();
+        }
+    }
+
+    public function findUsername($value)
+    {
+        $query = $this->createQueryBuilder('u')
+            ->andWhere('u.username = :val')
+            ->setParameter('val', $value)
+            ->getQuery();
+
+        if(empty($query->getResult())){
+            return null;
+        }else{
+            return $query->getResult()[0]->getUsername();
+        }
+    }
+
+    public function findPassword($value)
+    {
+        $query = $this->createQueryBuilder('u')
+            ->andWhere('u.username = :val')
+            ->setParameter('val', $value)
+            ->getQuery();
+
+        if(empty($query->getResult())){
+            return null;
+        }else{
+            return $query->getResult()[0]->getPassword();
+        }
     }
 
     public function findEmail($value)
@@ -99,10 +131,38 @@ class UserRepository extends ServiceEntityRepository
     }
 
     public function findUser($id){
-        return $this->createQueryBuilder('u')
+        $query = $this->createQueryBuilder('u')
             ->andWhere('u.id = :val')
             ->setParameter('val', $id)
-            ->getQuery()
-            ->getResult();
+            ->getQuery();
+        if(empty($query->getResult())){
+            return null;
+        }else{
+            return $query->getResult()[0]->getId();
+        }
+    }
+
+    public function findUsernameProfil($id){
+        $query = $this->createQueryBuilder('u')
+            ->andWhere('u.id = :val')
+            ->setParameter('val', $id)
+            ->getQuery();
+        if(empty($query->getResult())){
+            return null;
+        }else{
+            return $query->getResult()[0]->getUsername();
+        }
+    }
+
+    public function findCreatedAtProfil($id){
+        $query = $this->createQueryBuilder('u')
+            ->andWhere('u.id = :val')
+            ->setParameter('val', $id)
+            ->getQuery();
+        if(empty($query->getResult())){
+            return null;
+        }else{
+            return $query->getResult()[0]->getCreatedAt();
+        }
     }
 }
