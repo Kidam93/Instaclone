@@ -165,4 +165,8 @@ class UserRepository extends ServiceEntityRepository
             return $query->getResult()[0]->getCreatedAt();
         }
     }
+
+    public function joinProfil($value){
+
+    }
 }

@@ -1,10 +1,12 @@
 <?php
 namespace App\Controller\Profil;
 
+use App\Entity\Profil;
+use App\Entity\User;
+use App\Form\ProfilType;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -44,6 +46,7 @@ class ProfilController extends AbstractController{
             session_start();
         }
         $data = $_SESSION['id'] ?? null;
+        $this->session->set('id', $data);
         $username = $repository->findUsernameProfil($data);
         $created = $repository->findCreatedAtProfil($data);
         if(!$data){
@@ -53,6 +56,31 @@ class ProfilController extends AbstractController{
         return $this->render("profil/homeprofil.html.twig", [
             'username' => $username,
             'created' => $created
+        ]);
+    }
+
+    /**
+     * @Route("/user/updated", name="updatedprofil")
+     */
+    public function updated(Request $request){
+        $id = $this->session->get('id');
+        $em = $this->getDoctrine()->getManager();
+        $profil = new Profil();
+        $form = $this->createForm(ProfilType::class, $profil);
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+        $form->handleRequest($request);
+        //
+        $em->persist($profil);
+        //
+        if($form->isSubmitted() && $form->isValid()){
+            //
+            // $em->persist($profil);
+            //
+            $em->flush();
+            return $this->redirectToRoute("homeprofil");
+        }
+        return $this->render("profil/updatedprofil.html.twig", [
+            'form' => $form->createView()
         ]);
     }
 }
