@@ -22,23 +22,25 @@ class ReceptionController extends AbstractController{
      * @Route("/", name="index.registration")
      */
     public function registration(Request $request, UserRepository $repository, \Swift_Mailer $mailer){
-        $username = $request->request->get('username');
-        $email = $request->request->get('email');
-        $password = $request->request->get('password');
-        $password_confirmed = $request->request->get('password_confirmed');
-        $registrationControl = new RegistrationControl($username, $email, $password, $password_confirmed);
-        $isValid = $registrationControl->isValid();
-        $notUser = $registrationControl->notUser($request, $repository);
-        if(empty($isValid) && empty($notUser)){
-            $token = SendInscription::generateToken(60);
-            //INSERTION BDD
-            $insertUser = new InsertNewUser($username, $email, $password, $token);
-            $id = $insertUser->insertUser($request, $this->manager);
-            SendInscription::sendMail($mailer, $token, $id);
+        if(!empty($_POST)){
+            $username = $request->request->get('username');
+            $email = $request->request->get('email');
+            $password = $request->request->get('password');
+            $password_confirmed = $request->request->get('password_confirmed');
+            $registrationControl = new RegistrationControl($username, $email, $password, $password_confirmed);
+            $isValid = $registrationControl->isValid();
+            $notUser = $registrationControl->notUser($request, $repository);
+            if(empty($isValid) && empty($notUser)){
+                $token = SendInscription::generateToken(60);
+                //INSERTION BDD
+                $insertUser = new InsertNewUser($username, $email, $password, $token);
+                $id = $insertUser->insertUser($request, $this->manager);
+                SendInscription::sendMail($mailer, $token, $id);
+            }
         }
         return $this->render("reception/registration.html.twig", [
-            'messages' => $isValid,
-            'errors' => $notUser
+            'messages' => $isValid ?? null,
+            'errors' => $notUser ?? null
         ]);
     }
 
