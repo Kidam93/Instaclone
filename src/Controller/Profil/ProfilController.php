@@ -69,13 +69,9 @@ class ProfilController extends AbstractController{
         $form = $this->createForm(ProfilType::class, $profil);
         $user = $this->getDoctrine()->getRepository(User::class)->find($id);
         $form->handleRequest($request);
-        //
-        $em->persist($profil);
-        //
-        if($form->isSubmitted() && $form->isValid()){
-            //
-            // $em->persist($profil);
-            //
+        $profil->addUser($user);
+        if($form->isSubmitted() && $form->isValid()){ 
+            $em->persist($profil);
             $em->flush();
             return $this->redirectToRoute("homeprofil");
         }

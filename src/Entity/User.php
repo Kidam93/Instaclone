@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -47,8 +49,14 @@ class User
      */
     private $created_at;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Profil", mappedBy="users")
+     */
+    private $profils;
+
     public function __construct(){
         $this->created_at = new DateTime();
+        $this->profils = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,6 +132,34 @@ class User
     public function setCreatedAt(\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Profil[]
+     */
+    public function getProfils(): Collection
+    {
+        return $this->profils;
+    }
+
+    public function addProfil(Profil $profil): self
+    {
+        if (!$this->profils->contains($profil)) {
+            $this->profils[] = $profil;
+            $profil->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProfil(Profil $profil): self
+    {
+        if ($this->profils->contains($profil)) {
+            $this->profils->removeElement($profil);
+            $profil->removeUser($this);
+        }
 
         return $this;
     }

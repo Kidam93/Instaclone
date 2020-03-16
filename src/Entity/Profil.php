@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -47,10 +49,14 @@ class Profil
     private $imgs;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\User", inversedBy="profil", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(name="users_id", referencedColumnName="id")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="profils")
      */
     private $users;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -129,14 +135,28 @@ class Profil
         return $this;
     }
 
-    public function getUsers(): ?User
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
     {
         return $this->users;
     }
 
-    public function setUsers(?User $users): self
+    public function addUser(User $user): self
     {
-        $this->users = $users;
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+        }
 
         return $this;
     }
