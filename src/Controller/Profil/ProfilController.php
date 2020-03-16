@@ -1,10 +1,11 @@
 <?php
 namespace App\Controller\Profil;
 
-use App\Entity\Profil;
 use App\Entity\User;
+use App\Entity\Profil;
 use App\Form\ProfilType;
 use App\Repository\UserRepository;
+use App\Repository\ProfilRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -41,21 +42,23 @@ class ProfilController extends AbstractController{
     /**
      * @Route("/user", name="homeprofil")
      */
-    public function homeProfil(UserRepository $repository){
+    public function homeProfil(UserRepository $userRepo, ProfilRepository $profilRepo){
         if(session_status() === PHP_SESSION_NONE){
             session_start();
         }
         $data = $_SESSION['id'] ?? null;
         $this->session->set('id', $data);
-        $username = $repository->findUsernameProfil($data);
-        $created = $repository->findCreatedAtProfil($data);
+        $username = $userRepo->findUsernameProfil($data);
+        $created = $userRepo->findCreatedAtProfil($data);
         if(!$data){
             session_destroy();
             return $this->redirectToRoute("index.registration");
         }
+        $profil = $profilRepo->findLastProfil();
         return $this->render("profil/homeprofil.html.twig", [
             'username' => $username,
-            'created' => $created
+            'created' => $created,
+            'profils' => $profil ?? null
         ]);
     }
 

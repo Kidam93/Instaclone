@@ -47,4 +47,16 @@ class ProfilRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findLastProfil(){
+        $query = $this->createQueryBuilder('p')
+            ->orderBy('p.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery();
+        if(empty($query->getResult())){
+            return null;
+        }else{
+            return $query->getResult();
+        }
+    }
 }
