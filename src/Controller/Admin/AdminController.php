@@ -14,7 +14,6 @@ class AdminController extends AbstractController{
     public function admin(AuthenticationUtils $auth){
         $username = $auth->getLastUsername();
         $errors = $auth->getLastAuthenticationError();
-        // dd($errors);
         return $this->render("admin/control.html.twig", [
             'username' => $username,
             'errors' => $errors

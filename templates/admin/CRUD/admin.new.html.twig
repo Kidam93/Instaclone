@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('index.admin') }}" tabindex="-1" aria-disabled="true">Admin</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout" tabindex="-1" aria-disabled="true">Deconnexion</a>
+            </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container mt-4">
+    <h3>Creer un Profil</h3>
+    {{ form_start(form) }}
+        {{ form_rest(form) }}
+        <button class="btn btn-primary">Enregistrer</button>
+    {{ form_end(form) }}
+    </div>
+{% endblock %}

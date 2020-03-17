@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('index.admin') }}" tabindex="-1" aria-disabled="true">Admin</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/logout" tabindex="-1" aria-disabled="true">Deconnexion</a>
+        </li>
+        </ul>
+    </div>
+</nav>
+<div class="">
+    <table class="table">
+        <thead>
+            <tr>
+            <th scope="col"><strong>id</strong></th>
+            <th scope="col"><strong>username</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+            <th>{{ user.id }}</th>
+            <td>{{ user.username }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table">
+        <thead>
+            <tr>
+            <th scope="col"><strong>email</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+            <th>{{ user.email }}</th>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table">
+        <thead>
+            <tr>
+            <th scope="col"><strong>password</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+            <td>{{ user.password }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table">
+        <thead>
+            <tr>
+            <th scope="col"><strong>token</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+            <th>{{ user.token }}</th>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table">
+        <thead>
+            <tr>
+            <th scope="col"><strong>created_token</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+            <td>{{ user.createdAt|date("d/m/Y") }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<a href="{{ path('index.admin') }}" class="btn btn-primary ml-4 mt-4">Retour</a>
+{% endblock %}

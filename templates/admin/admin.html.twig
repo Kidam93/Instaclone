@@ -111,7 +111,7 @@
       {# <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas> #}
 
       <h2>Section title</h2>
-      <div class="table-responsive">
+      <div class="table-responsive" style="overflow: hidden;">
         <table class="table table-striped table-sm">
           <thead>
             <tr>
@@ -124,6 +124,16 @@
               <tr>
                 <td>{{ user.id }}</td>
                 <td>{{ user.username }}</td>
+                <td>
+                <div class="d-flex" style="position: relative; left: calc(95% - 250px);">
+                  <a href="{{ path('admin.view', {id: user.id}) }}" class="btn btn-primary ml-2">Voir</a>
+                  <a href="{{ path('admin.edit', {id : user.id}) }}" class="btn btn-success ml-2">Modifier</a>
+                  <form method="post" action="{{ path('admin.delete', { id: user.id }) }}" class="ml-2">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button class="btn btn-danger">Supprimer</button>
+                  </form>
+                </div>
+                </td> 
               </tr>
             {% endfor %}
           </tbody>
@@ -132,4 +142,5 @@
     </main>
   </div>
 </div>
+<a href="{{ path('admin.new') }}" class="btn btn-primary ml-4 mt-4">New Profil</a>
 {% endblock %}
