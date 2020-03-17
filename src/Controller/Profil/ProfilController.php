@@ -80,6 +80,6 @@ class ProfilController extends AbstractController{
         }
         return $this->render("profil/updatedprofil.html.twig", [
             'form' => $form->createView()
-        ]);
+        ]);           
     }
 }
