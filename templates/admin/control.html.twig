@@ -15,17 +15,17 @@
     </div>
     </nav>
     <div class="container">
-    <h1 class="mt-4">Connexion</h1>
-        <form class="mt-4" action="" method="post">
+    <h1 class="mt-4">Admin Connexion</h1>
+        <form class="mt-4" action="{{ path('control.admin') }}" method="post">
             <div class="form-group">
-                <label>Votre pseudooooooooooooooooooo</label>
-                <input type="text" class="form-control" name="username">
+                <label>Votre pseudo</label>
+                <input type="text" class="form-control" name="_username" value="{{ username }}">
             </div>
             <div class="form-group">
                 <label>Votre mot de passe</label>
-                <input type="text" class="form-control" name="password">
+                <input type="text" class="form-control" name="_password">
             </div>
-            <button class="btn btn-primary">S'inscrire</a>
+            <button type="submit" class="btn btn-primary">S'inscrire</a>
         </form>
     </div>
 {% endblock %}
