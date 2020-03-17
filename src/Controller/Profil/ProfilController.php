@@ -54,11 +54,19 @@ class ProfilController extends AbstractController{
             session_destroy();
             return $this->redirectToRoute("index.registration");
         }
-        $profil = $profilRepo->findLastProfil();
+        $undefined = (int)$profilRepo->findJoinProfil($data);
+        if($undefined === 0){
+            $user = null;
+            $profil = null;
+        }else{
+            $tab = $profilRepo->findJoinProfil($data);
+            $user = (int)end($tab)['profil_id'];
+            $profil = $profilRepo->find($user);
+        }
         return $this->render("profil/homeprofil.html.twig", [
-            'username' => $username,
+            'user' => $username,
             'created' => $created,
-            'profils' => $profil ?? null
+            'profil' => $profil ?? null
         ]);
     }
 

@@ -77,7 +77,9 @@ class ReceptionController extends AbstractController{
      * @Route("/deconnexion", name="index.disconnected")
      */
     public function logout(){
-        session_start();
+        if(session_status() === PHP_SESSION_NONE){
+            session_start();
+        }
         $_SESSION['id'] = null;
         return $this->redirectToRoute("index.registration");
     }

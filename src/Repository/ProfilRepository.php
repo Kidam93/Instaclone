@@ -59,4 +59,16 @@ class ProfilRepository extends ServiceEntityRepository
             return $query->getResult();
         }
     }
+
+    //
+    public function findJoinProfil($user_id){
+        $rawSql = "SELECT profil_id FROM profil_user WHERE user_id = $user_id";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        $stmt->execute([$user_id]);
+        return $stmt->fetchAll();
+        
+        // user_id = 3
+        // profil_id = 2
+    }
+    //
 }
