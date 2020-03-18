@@ -35,10 +35,15 @@
             </form>
         </div>
     </nav>
+    {% for message in app.flashes('danger') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
     <div class="container mt-4">
         {{ form_start(form) }}
             {{ form_rest(form) }}
-            <button class="btn btn-success">Editer</button>
+            <button class="btn btn-primary">Editer</button>
         {{ form_end(form) }}
     </div>
 {% endblock %}

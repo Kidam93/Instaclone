@@ -6,6 +6,7 @@ use App\Entity\Profil;
 use App\Form\ProfilType;
 use App\Repository\UserRepository;
 use App\Repository\ProfilRepository;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -15,9 +16,12 @@ class ProfilController extends AbstractController{
 
     private $session;
 
-    public function __construct(SessionInterface $session)
+    protected $container;
+
+    public function __construct(SessionInterface $session, ContainerInterface $container)
     {
         $this->session = $session;
+        $this->container = $container;
     }
 
     /**
@@ -82,6 +86,9 @@ class ProfilController extends AbstractController{
         $form->handleRequest($request);
         $profil->addUser($user);
         if($form->isSubmitted() && $form->isValid()){ 
+            $dataFiles = new FilesController($this->container);
+            $dataFiles->imageUpload($form, $request);
+            // $em->persist($profil);
             $em->persist($profil);
             $em->flush();
             return $this->redirectToRoute("homeprofil");
