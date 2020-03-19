@@ -21,20 +21,36 @@ class FilesController extends AbstractController{
         ];
 
         define('DS', DIRECTORY_SEPARATOR);
-        $directory = dirname(__DIR__, 3) . DS . 'assets' . DS . 'images';
+        $directory = dirname(__DIR__, 3) . DS . 'public' . DS . 'images';
 
         $profil = new Profil();
         $em = $this->getDoctrine()->getManager();
-        $file = $form['img_profil']->getData();
+        $file = $form['filename']->getData();
         $someNewFilename = $file->getClientOriginalName();
-        $name = explode('.', $someNewFilename)[0];
-        $extension = explode('.', $someNewFilename)[1];
-        if(in_array($extension, $valid)){
+        //
+        $data = explode('.', $someNewFilename);
+        $ext = end($data);
+        //
+        if(in_array($ext, $valid)){
             $file->move($directory, $someNewFilename);
-            // dd($em->persist($profil)); NULL
             $this->addFlash('success', 'Article Created!');
         }else{
             $this->addFlash('danger', 'Invalid!');
         }
+    }
+
+    public function setFileName($form, $profil){
+        $valid = [
+            'jpg'
+        ];
+
+        $file = $form['filename']->getData();
+        $someNewFilename = $file->getClientOriginalName();
+        $data = explode('.', $someNewFilename);
+        $ext = end($data);
+        if(in_array($ext, $valid)){
+            return $profil->setFilename($someNewFilename);
+        }
+        
     }
 }

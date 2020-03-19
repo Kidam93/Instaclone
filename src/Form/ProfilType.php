@@ -17,7 +17,9 @@ class ProfilType extends AbstractType
             ->add('nom')
             ->add('age')
             ->add('description')
-            ->add('img_profil', FileType::class);
+            ->add('filename', FileType::class, [
+                'required' => false
+            ]);
             // ->add('img_profil')
             // ->add('imgs')
             // ->add('users')

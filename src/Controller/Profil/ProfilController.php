@@ -62,15 +62,18 @@ class ProfilController extends AbstractController{
         if($undefined === 0){
             $user = null;
             $profil = null;
+            $filename = null;
         }else{
             $tab = $profilRepo->findJoinProfil($data);
             $user = (int)end($tab)['profil_id'];
             $profil = $profilRepo->find($user);
+            $filename = $profil->getFilename();
         }
         return $this->render("profil/homeprofil.html.twig", [
             'user' => $username,
             'created' => $created,
-            'profil' => $profil ?? null
+            'profil' => $profil ?? null,
+            'filename' => $filename
         ]);
     }
 
@@ -88,7 +91,7 @@ class ProfilController extends AbstractController{
         if($form->isSubmitted() && $form->isValid()){ 
             $dataFiles = new FilesController($this->container);
             $dataFiles->imageUpload($form, $request);
-            // $em->persist($profil);
+            $dataFiles->setFileName($form, $profil);
             $em->persist($profil);
             $em->flush();
             return $this->redirectToRoute("homeprofil");

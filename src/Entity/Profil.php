@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\File;
+use Doctrine\Common\Collections\ArrayCollection;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProfilRepository")
@@ -39,14 +41,10 @@ class Profil
     private $description;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string|null
+     * @ORM\Column(type="string", length=255)
      */
-    private $img_profil;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $imgs;
+    private $filename;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="profils")
@@ -111,30 +109,6 @@ class Profil
         return $this;
     }
 
-    public function getImgProfil(): ?string
-    {
-        return $this->img_profil;
-    }
-
-    public function setImgProfil(?string $img_profil): self
-    {
-        $this->img_profil = $img_profil;
-
-        return $this;
-    }
-
-    public function getImgs(): ?string
-    {
-        return $this->imgs;
-    }
-
-    public function setImgs(?string $imgs): self
-    {
-        $this->imgs = $imgs;
-
-        return $this;
-    }
-
     /**
      * @return Collection|User[]
      */
@@ -157,6 +131,30 @@ class Profil
         if ($this->users->contains($user)) {
             $this->users->removeElement($user);
         }
+
+        return $this;
+    }
+
+    /**
+     * Get the value of filename
+     *
+     * @return  string|null
+     */ 
+    public function getFilename()
+    {
+        return $this->filename;
+    }
+
+    /**
+     * Set the value of filename
+     *
+     * @param  string|null  $filename
+     *
+     * @return  self
+     */ 
+    public function setFilename($filename)
+    {
+        $this->filename = $filename;
 
         return $this;
     }
