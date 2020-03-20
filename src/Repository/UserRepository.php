@@ -166,7 +166,11 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    public function joinProfil($value){
-
+    public function findName($name){
+        $query = $this->createQueryBuilder('p')
+                ->andWhere('p.username LIKE :searchTerm')
+                ->setParameter('searchTerm', '%'.$name.'%');
+        return $query->getQuery()
+                    ->getResult();
     }
 }

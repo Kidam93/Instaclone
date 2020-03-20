@@ -18,10 +18,19 @@ class ProfilController extends AbstractController{
 
     protected $container;
 
-    public function __construct(SessionInterface $session, ContainerInterface $container)
+    private $userRepo;
+
+    private $profilRepo;
+
+    public function __construct(SessionInterface $session, 
+                                ContainerInterface $container, 
+                                UserRepository $userRepo, 
+                                ProfilRepository $profilRepo)
     {
         $this->session = $session;
         $this->container = $container;
+        $this->userRepo = $userRepo;
+        $this->profilRepo = $profilRepo;
     }
 
     /**
@@ -88,10 +97,21 @@ class ProfilController extends AbstractController{
         $user = $this->getDoctrine()->getRepository(User::class)->find($id);
         $form->handleRequest($request);
         $profil->addUser($user);
+        if(!empty($this->profilRepo->findJoinProfil($id))){
+            $dataProfil = (int)$this->profilRepo->findJoinProfil($id)[0]['profil_id'];
+        }else{
+            $dataProfil = null;
+        }
         if($form->isSubmitted() && $form->isValid()){ 
             $dataFiles = new FilesController($this->container);
             $dataFiles->imageUpload($form, $request);
             $dataFiles->setFileName($form, $profil);
+            //DELETE LAST FIELD
+            if($dataProfil !== null){
+                $this->profilRepo->deleteProfil_user($dataProfil);
+                $this->profilRepo->deleteProfil($dataProfil);
+            }
+            //
             $em->persist($profil);
             $em->flush();
             return $this->redirectToRoute("homeprofil");
@@ -99,5 +119,17 @@ class ProfilController extends AbstractController{
         return $this->render("profil/updatedprofil.html.twig", [
             'form' => $form->createView()
         ]);           
+    }
+
+    /**
+     * @Route("/user/search", name="searchprofil")
+     */
+    public function search(Request $request){
+        $data = $request->request->get('data');
+        $profil = $this->profilRepo->findName($data);
+        // dd($profil);
+        return $this->render("user/search.html.twig", [
+            'profiltabs' => $profil ?? null
+        ]);
     }
 }

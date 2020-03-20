@@ -60,19 +60,33 @@ class ProfilRepository extends ServiceEntityRepository
         }
     }
 
-    //
     public function findJoinProfil($user_id){
         $rawSql = "SELECT profil_id FROM profil_user WHERE user_id = $user_id";
         $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
         $stmt->execute([$user_id]);
         return $stmt->fetchAll();
-        
-        // user_id = 3
-        // profil_id = 2
     }
-    //
 
-    // public function findImgProfil(){
+    public function deleteProfil_user($profil_id){
+        $rawSql = "DELETE FROM profil_user WHERE profil_id = $profil_id";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        return $stmt->execute([$profil_id]);
+    }
 
-    // }
+    public function deleteProfil($id){
+        $rawSql = "DELETE FROM profil WHERE id = $id";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        return $stmt->execute([$id]);
+    }
+
+    public function findName($name){
+        $query = $this->createQueryBuilder('p')
+                ->andWhere('p.prenom LIKE :searchTerm OR p.nom LIKE :searchTerm')
+                ->setParameter('searchTerm', '%'.$name.'%');
+        // return $query->orderBy('p.id', 'DESC')
+        //             ->setMaxResults(1)
+
+        return $query->getQuery()
+                    ->getResult();
+    }
 }
