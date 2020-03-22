@@ -1,9 +1,11 @@
 <?php
 namespace App\Controller\Profil;
 
+use App\Entity\Friend;
 use App\Entity\User;
 use App\Entity\Profil;
 use App\Form\ProfilType;
+use App\Repository\FriendRepository;
 use App\Repository\UserRepository;
 use App\Repository\ProfilRepository;
 use Psr\Container\ContainerInterface;
@@ -22,15 +24,19 @@ class ProfilController extends AbstractController{
 
     private $profilRepo;
 
+    private $friendRepo;
+
     public function __construct(SessionInterface $session, 
                                 ContainerInterface $container, 
                                 UserRepository $userRepo, 
-                                ProfilRepository $profilRepo)
+                                ProfilRepository $profilRepo,
+                                FriendRepository $friendRepo)
     {
         $this->session = $session;
         $this->container = $container;
         $this->userRepo = $userRepo;
         $this->profilRepo = $profilRepo;
+        $this->friendRepo = $friendRepo;
     }
 
     /**
@@ -59,6 +65,9 @@ class ProfilController extends AbstractController{
         if(session_status() === PHP_SESSION_NONE){
             session_start();
         }
+        $user = null;
+        $profil = null;
+        $filename = null;
         $data = $_SESSION['id'] ?? null;
         $this->session->set('id', $data);
         $username = $userRepo->findUsernameProfil($data);
@@ -67,22 +76,19 @@ class ProfilController extends AbstractController{
             session_destroy();
             return $this->redirectToRoute("index.registration");
         }
-        $undefined = (int)$profilRepo->findJoinProfil($data);
-        if($undefined === 0){
-            $user = null;
-            $profil = null;
-            $filename = null;
-        }else{
+        if((int)$profilRepo->findJoinProfil($data) !== 0){
             $tab = $profilRepo->findJoinProfil($data);
             $user = (int)end($tab)['profil_id'];
             $profil = $profilRepo->find($user);
             $filename = $profil->getFilename();
+            $friends = $this->userRepo->findJoinId($user);
         }
         return $this->render("profil/homeprofil.html.twig", [
             'user' => $username,
             'created' => $created,
             'profil' => $profil ?? null,
-            'filename' => $filename
+            'filename' => $filename ?? null,
+            'friends' => $friends ?? null
         ]);
     }
 

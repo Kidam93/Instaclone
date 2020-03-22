@@ -54,9 +54,15 @@ class User
      */
     private $profils;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Friend", mappedBy="users")
+     */
+    private $friends;
+
     public function __construct(){
         $this->created_at = new DateTime();
         $this->profils = new ArrayCollection();
+        $this->friends = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -159,6 +165,34 @@ class User
         if ($this->profils->contains($profil)) {
             $this->profils->removeElement($profil);
             $profil->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Friend[]
+     */
+    public function getFriends(): Collection
+    {
+        return $this->friends;
+    }
+
+    public function addFriend(Friend $friend): self
+    {
+        if (!$this->friends->contains($friend)) {
+            $this->friends[] = $friend;
+            $friend->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFriend(Friend $friend): self
+    {
+        if ($this->friends->contains($friend)) {
+            $this->friends->removeElement($friend);
+            $friend->removeUser($this);
         }
 
         return $this;

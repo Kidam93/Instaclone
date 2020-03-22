@@ -173,4 +173,41 @@ class UserRepository extends ServiceEntityRepository
         return $query->getQuery()
                     ->getResult();
     }
+
+    public function findJoinId($id){
+        // $rawSql = "SELECT user.id FROM user JOIN friend ON user.id = friend.user_id WHERE friend.friend_id = $id";
+        // EXPERIMENTAL
+        // $rawSql = "SELECT * FROM (profil JOIN user ON user.user_id = profil.id) JOIN user JOIN friend ON user.id = friend.user_id WHERE friend.friend_id = $id";
+        // $rawSql = "SELECT * FROM (profil JOIN user AS user_profil ON user_profil.id = profil.id) JOIN user JOIN friend ON user.id = friend.user_id WHERE friend.friend_id = $id";
+        // $rawSql = "SELECT * FROM user JOIN friend ON user.id = friend.user_id WHERE friend.friend_id = $id";
+        // $rawSql = "SELECT * FROM user JOIN friend ON user.id = friend.user_id WHERE friend.friend_id = $id";
+        // $rawSql = "SELECT profil_id FROM (profil_user JOIN user ON user.id = profil_user.user_id) JOIN friend ON user.id = friend.user_id WHERE friend.friend_id = $id";
+        $rawSql = "SELECT *
+                    FROM (profil JOIN profil_user ON profil_user.profil_id = profil.id)
+                    JOIN user ON user.id = profil_user.user_id
+                    JOIN friend ON user.id = friend.user_id
+                    WHERE friend.friend_id = $id";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        $stmt->execute([$id]);
+        return $stmt->fetchAll();
+    }
+
+    public function findMyProfil($id, $myFriend){
+        $rawSql = "SELECT friend.user_id 
+                    FROM profil_user 
+                    JOIN friend ON friend.friend_id = profil_user.profil_id
+                    WHERE profil_user.user_id = $id AND friend.user_id = $myFriend";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        $stmt->execute([$id, $myFriend]);
+        return $stmt->fetchAll();
+    }
+
+    public function findMyFriend($id){
+        $rawSql = "SELECT user_id 
+                    FROM profil_user 
+                    WHERE profil_user.profil_id = $id";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        $stmt->execute([$id]);
+        return $stmt->fetchAll();
+    }
 }

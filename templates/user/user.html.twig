@@ -51,6 +51,26 @@
                 {# <strong class="d-block text-gray-dark">{{ created|date("d/m/Y") }}</strong> #}
             </p>
             </div>
+            {% if existing == false %}
+                <small class="d-block text-right mt-3">
+                <a href="{{ path('profil.adduser', {id: profil.id } ) }}" class="btn btn-success">Ajouter</a>
+                </small>
+            {% elseif isFriend == 0 %}
+                {% if add == true %}
+                <small class="d-block text-right mt-3">
+                    <a href="{{ path('profil.accept', { id: myProfil }) }}" class="btn btn-success mr-2">Accepter</a>
+                    <a href="{{ path('profil.refuse', { id: myProfil }) }}" class="btn btn-danger mr-2">Refuser</a>
+                </small>
+                {% else %}
+                <small class="d-block text-right mt-3">
+                <span class="badge badge-secondary">Invitation envoyée</span>
+                </small>
+                {% endif %}
+            {% elseif isFriend == 1 %}
+                <small class="d-block text-right mt-3">
+                <span class="badge badge-success">Amis</span>
+                </small>
+            {% endif %}
         </div>
     {% else %}
         <div class="my-3 p-3 bg-white rounded shadow-sm" style="width: 100%;">
