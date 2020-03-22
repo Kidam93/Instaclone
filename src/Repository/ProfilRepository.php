@@ -89,4 +89,21 @@ class ProfilRepository extends ServiceEntityRepository
         return $query->getQuery()
                     ->getResult();
     }
+
+    public function updateFriend($myProfilId, $id){
+        $rawSql = "UPDATE friend
+                    SET friend.is_friend = 1
+                    WHERE friend.friend_id = $myProfilId
+                    AND friend.user_id = $id";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        return $stmt->execute([$myProfilId, $id]);
+    }
+
+    public function deleteFriend($myProfilId, $id){
+        $rawSql = "DELETE FROM friend
+                    WHERE friend.friend_id = $myProfilId
+                    AND friend.user_id = $id";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        return $stmt->execute([$myProfilId, $id]);
+    }
 }

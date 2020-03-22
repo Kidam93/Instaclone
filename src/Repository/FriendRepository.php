@@ -81,5 +81,4 @@ class FriendRepository extends ServiceEntityRepository
         $stmt->execute([$id, $myId]);
         return $stmt->fetchAll();
     }
-
 }

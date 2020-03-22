@@ -38,13 +38,29 @@ class Friend extends AbstractController{
      * @Route("/user/accept-{id}", name="profil.accept")
      */
     public function accept($id){
-
+        $myId = $this->session->get('id');
+        $profil = $this->profilRepo->findJoinProfil($myId);
+        if(!empty($profil)){
+            $profil = (int)$profil[0]['profil_id'];
+            $myProfilId = $this->profilRepo->find($profil)->getId();
+            // Me $myProfilId
+            // Friend (int)$id
+            $updated = $this->profilRepo->updateFriend($myProfilId, (int)$id);
+        }
+        return $this->redirectToRoute("homeprofil");
     }
 
     /**
      * @Route("/user/refuse-{id}", name="profil.refuse")
      */
     public function refuse($id){
-        
+        $myId = $this->session->get('id');
+        $profil = $this->profilRepo->findJoinProfil($myId);
+        if(!empty($profil)){
+            $profil = (int)$profil[0]['profil_id'];
+            $myProfilId = $this->profilRepo->find($profil)->getId();
+            $delete = $this->profilRepo->deleteFriend($myProfilId, (int)$id);
+        }
+        return $this->redirectToRoute("homeprofil");
     }
 }

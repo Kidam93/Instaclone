@@ -43,13 +43,14 @@ class User extends AbstractController{
         // IS FRIEND ?
         $profil = $this->profilRepo->find($id);
         $myId = $session->get('id');
-        $friend = $profil->getId();
-        $myFriend = (int)$this->userRepo->findMyFriend($friend)[0]['user_id'];
+        $myFriend = (int)$this->userRepo->findMyFriend($profil->getId())[0]['user_id'];
         $myProfil = 0;
+        $isFriend = 0;
         $add = false;
+        $existing = false;
+        $isRelation = false;
+        //
         if(!empty($this->friendRepo->findFriendId($id))){
-            $isFriend = 0;
-            $existing = false;
             if(!empty($this->friendRepo->findFriendUser($myId))){
                 $isFriend = (int)$this->friendRepo->findIsFriend((int)$id, $myId)[0]['is_friend'];
                 $existing = true;
@@ -62,8 +63,13 @@ class User extends AbstractController{
                 $add = true;
             }
         }
-        // dd($existing, $isFriend, $add, $myProfil);
-        //
+        $profilId = (int)$this->userRepo->selectProfil($myId)[0]['profil_id'];
+        if(!empty($this->userRepo->isRelation($myFriend, $profilId))){
+            $isRelation = (bool)$this->userRepo->isRelation($myFriend, $profilId)[0]['is_friend'];
+            if($isRelation === true){
+                $isFriend = 1;
+            }
+        }
         return $this->render("user/user.html.twig", [
             'profil' => $profil,
             'isFriend' => $isFriend ?? null,

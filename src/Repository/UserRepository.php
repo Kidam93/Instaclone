@@ -210,4 +210,23 @@ class UserRepository extends ServiceEntityRepository
         $stmt->execute([$id]);
         return $stmt->fetchAll();
     }
+
+    public function selectProfil($id){
+        $rawSql = "SELECT *
+                    FROM profil_user 
+                    WHERE profil_user.user_id = $id";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        $stmt->execute([$id]);
+        return $stmt->fetchAll();
+    }
+
+    public function isRelation($myFriend, $profilId){
+        $rawSql = "SELECT is_friend
+                    FROM friend 
+                    WHERE friend.user_id = $myFriend 
+                    AND friend.friend_id = $profilId";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        $stmt->execute([$myFriend, $profilId]);
+        return $stmt->fetchAll();
+    }
 }
