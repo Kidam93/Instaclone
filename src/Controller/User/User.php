@@ -70,6 +70,19 @@ class User extends AbstractController{
                 $isFriend = 1;
             }
         }
+        $aff = $this->friendRepo->affFriend($myId, $id, $myFriend, $profilId);
+        if(!empty($aff)){
+            $aff = (int)$aff[0]['is_friend'];
+            if($aff === 1){
+                return $this->render("user/friend.html.twig", [
+                    'profil' => $profil,
+                    'isFriend' => $isFriend ?? null,
+                    'existing' => $existing ?? null,
+                    'add' => $add ?? null,
+                    'myProfil' => $myProfil ?? null
+                ]);
+            }
+        }
         return $this->render("user/user.html.twig", [
             'profil' => $profil,
             'isFriend' => $isFriend ?? null,
@@ -93,6 +106,9 @@ class User extends AbstractController{
             ->setIsFriend(0);
         $em->persist($friend);
         $em->flush();
-        return $this->redirectToRoute("homeprofil");
+        return $this->redirectToRoute("profil.user", [
+            'id' => $id
+        ]);
+        // return $this->redirectToRoute("homeprofil");
     }
 }

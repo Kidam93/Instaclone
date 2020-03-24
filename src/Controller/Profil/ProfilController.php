@@ -83,13 +83,19 @@ class ProfilController extends AbstractController{
             $filename = $profil->getFilename();
             $friends = $this->userRepo->findJoinId($user);
         }
-        // dd($friends);
+        // user_id = 17 ($data)
+        // friend_id = 98 ($user)
+        if(!empty($data && $user)){
+            $aff= $this->friendRepo->affUser($data);
+            // dd($aff);
+        }
         return $this->render("profil/homeprofil.html.twig", [
             'user' => $username,
             'created' => $created,
             'profil' => $profil ?? null,
             'filename' => $filename ?? null,
-            'friends' => $friends ?? null
+            'friends' => $friends ?? null,
+            'affs' => $aff ?? null
         ]);
     }
 
