@@ -52,8 +52,11 @@ class User extends AbstractController{
         //
         if(!empty($this->friendRepo->findFriendId($id))){
             if(!empty($this->friendRepo->findFriendUser($myId))){
-                $isFriend = (int)$this->friendRepo->findIsFriend((int)$id, $myId)[0]['is_friend'];
+                // LOG IS MY PROFIL ?
                 $existing = true;
+                if(!empty($this->friendRepo->findIsFriend((int)$id, $myId))){
+                    $isFriend = (int)$this->friendRepo->findIsFriend((int)$id, $myId)[0]['is_friend'];
+                }
             }
         }
         if((int)$this->userRepo->findMyProfil($myId, $myFriend) !== 0){

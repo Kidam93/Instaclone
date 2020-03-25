@@ -1,15 +1,19 @@
 <?php
 namespace App\Controller\Profil;
 
-use App\Entity\Friend;
 use App\Entity\User;
+use App\Entity\Wall;
+use App\Entity\Friend;
 use App\Entity\Profil;
+use App\Form\WallType;
 use App\Form\ProfilType;
-use App\Repository\FriendRepository;
 use App\Repository\UserRepository;
+use App\Repository\FriendRepository;
 use App\Repository\ProfilRepository;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use App\Controller\Profil\Wall\WallController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,9 +46,9 @@ class ProfilController extends AbstractController{
     /**
      * @Route("/profil/id={id}&token={token}", name="verifyprofil")
      */
-    public function verifyProfil($id, $token, UserRepository $repository){
-        $profilId = $repository->findId($id);
-        $profilToken = $repository->findToken($token);
+    public function verifyProfil($id, $token){
+        $profilId = $this->repository->findId($id);
+        $profilToken = $this->repository->findToken($token);
         if((int)$id === $profilId && $token === $profilToken){
             $this->session->set('id', $profilId);
             if(session_status() === PHP_SESSION_NONE){
@@ -61,7 +65,7 @@ class ProfilController extends AbstractController{
     /**
      * @Route("/user", name="homeprofil")
      */
-    public function homeProfil(UserRepository $userRepo, ProfilRepository $profilRepo){
+    public function homeProfil(Request $request){
         if(session_status() === PHP_SESSION_NONE){
             session_start();
         }
@@ -70,32 +74,49 @@ class ProfilController extends AbstractController{
         $filename = null;
         $data = $_SESSION['id'] ?? null;
         $this->session->set('id', $data);
-        $username = $userRepo->findUsernameProfil($data);
-        $created = $userRepo->findCreatedAtProfil($data);
+        $username = $this->userRepo->findUsernameProfil($data);
+        $created = $this->userRepo->findCreatedAtProfil($data);
         if(!$data){
             session_destroy();
             return $this->redirectToRoute("index.registration");
         }
-        if((int)$profilRepo->findJoinProfil($data) !== 0){
-            $tab = $profilRepo->findJoinProfil($data);
+        if((int)$this->profilRepo->findJoinProfil($data) !== 0){
+            $tab = $this->profilRepo->findJoinProfil($data);
             $user = (int)end($tab)['profil_id'];
-            $profil = $profilRepo->find($user);
+            $profil = $this->profilRepo->find($user);
             $filename = $profil->getFilename();
             $friends = $this->userRepo->findJoinId($user);
         }
-        // user_id = 17 ($data)
-        // friend_id = 98 ($user)
         if(!empty($data && $user)){
             $aff= $this->friendRepo->affUser($data);
-            // dd($aff);
         }
+        // WALL
+        $wall = new Wall();
+        $userObj = $this->getDoctrine()->getRepository(User::class)->find($this->session->get('id'));
+        $form = $this->createForm(WallType::class, $wall);
+        $em = $this->getDoctrine()->getManager();
+        $form->handleRequest($request);
+        $wall->addProfilComment($profil);
+        $wall->addUserComment($userObj);
+        if($form->isSubmitted() && $form->isValid()){
+            $dataFiles = new WallController($this->container);
+            $dataFiles->imageUpload($form, $request);
+            $dataFiles->setFile($form, $wall);
+            $em->persist($wall);
+            $em->flush();
+            return $this->redirectToRoute("homeprofil");
+        }
+        $wallData = $this->userRepo->findWall($this->session->get('id'));
+        // dd($wallData);
         return $this->render("profil/homeprofil.html.twig", [
             'user' => $username,
             'created' => $created,
             'profil' => $profil ?? null,
             'filename' => $filename ?? null,
             'friends' => $friends ?? null,
-            'affs' => $aff ?? null
+            'affs' => $aff ?? null,
+            'wallData' => array_reverse($wallData),
+            'form' => $form->createView()
         ]);
     }
 

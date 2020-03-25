@@ -229,4 +229,14 @@ class UserRepository extends ServiceEntityRepository
         $stmt->execute([$myFriend, $profilId]);
         return $stmt->fetchAll();
     }
+
+    public function findWall($user){
+        $rawSql = "SELECT * 
+                    FROM wall
+                    JOIN wall_user ON wall.id = wall_user.wall_id
+                    WHERE wall_user.user_id = $user";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        $stmt->execute([$user]);
+        return $stmt->fetchAll();
+    }
 }

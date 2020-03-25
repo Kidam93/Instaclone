@@ -59,10 +59,16 @@ class User
      */
     private $friends;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Wall", mappedBy="userComment")
+     */
+    private $walls;
+
     public function __construct(){
         $this->created_at = new DateTime();
         $this->profils = new ArrayCollection();
         $this->friends = new ArrayCollection();
+        $this->walls = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -193,6 +199,34 @@ class User
         if ($this->friends->contains($friend)) {
             $this->friends->removeElement($friend);
             $friend->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Wall[]
+     */
+    public function getWalls(): Collection
+    {
+        return $this->walls;
+    }
+
+    public function addWall(Wall $wall): self
+    {
+        if (!$this->walls->contains($wall)) {
+            $this->walls[] = $wall;
+            $wall->addUserComment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWall(Wall $wall): self
+    {
+        if ($this->walls->contains($wall)) {
+            $this->walls->removeElement($wall);
+            $wall->removeUserComment($this);
         }
 
         return $this;

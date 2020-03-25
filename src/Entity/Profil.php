@@ -51,9 +51,15 @@ class Profil
      */
     private $users;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Wall", mappedBy="profilComment")
+     */
+    private $walls;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->walls = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -155,6 +161,34 @@ class Profil
     public function setFilename($filename)
     {
         $this->filename = $filename;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Wall[]
+     */
+    public function getWalls(): Collection
+    {
+        return $this->walls;
+    }
+
+    public function addWall(Wall $wall): self
+    {
+        if (!$this->walls->contains($wall)) {
+            $this->walls[] = $wall;
+            $wall->addProfilComment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWall(Wall $wall): self
+    {
+        if ($this->walls->contains($wall)) {
+            $this->walls->removeElement($wall);
+            $wall->removeProfilComment($this);
+        }
 
         return $this;
     }
