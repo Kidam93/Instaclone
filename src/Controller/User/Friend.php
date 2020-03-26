@@ -54,6 +54,7 @@ class Friend extends AbstractController{
      * @Route("/user/refuse-{id}", name="profil.refuse")
      */
     public function refuse($id){
+        // DEBUG DELETE FRIEND
         $myId = $this->session->get('id');
         $profil = $this->profilRepo->findJoinProfil($myId);
         if(!empty($profil)){
@@ -61,6 +62,25 @@ class Friend extends AbstractController{
             $myProfilId = $this->profilRepo->find($profil)->getId();
             $delete = $this->profilRepo->deleteFriend($myProfilId, (int)$id);
         }
+        return $this->redirectToRoute("homeprofil");
+    }
+
+    /**
+     * @Route("/user/delete-{id}", name="profil.delete")
+     */
+    public function delete($id){
+        $myId = $this->session->get('id');
+        $profil = $this->profilRepo->findJoinProfil($myId);
+        if(!empty($profil)){
+            $profil = (int)$profil[0]['profil_id'];
+            $myProfilId = $this->profilRepo->find($profil)->getId();
+            $friendId = $this->profilRepo->findJoinProfil((int)$id);
+            if($friendId){
+                $friendId = (int)$friendId[0]['profil_id'];
+                $delete = $this->profilRepo->deleteMyFriend($myId, $profil, (int)$id, $friendId);
+            }
+        }
+        // dd($myId, $profil, (int)$id, $friendId);
         return $this->redirectToRoute("homeprofil");
     }
 }

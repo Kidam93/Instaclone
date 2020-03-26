@@ -106,4 +106,17 @@ class ProfilRepository extends ServiceEntityRepository
         $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
         return $stmt->execute([$myProfilId, $id]);
     }
+
+    public function deleteMyFriend($myId, $profil, $id, $friendId){
+        // dark $myId 17, $profil 98
+        // laurence $id 18, $friendId 99
+        $rawSql = "DELETE FROM friend
+                    WHERE (friend.user_id = $myId
+                    AND friend.friend_id = $friendId)
+                    OR (friend.user_id = $id
+                    AND friend.friend_id = $profil)";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        return $stmt->execute([$myId, $profil, $id, $friendId]);
+    }
+
 }

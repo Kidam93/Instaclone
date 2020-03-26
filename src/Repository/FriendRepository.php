@@ -92,20 +92,33 @@ class FriendRepository extends ServiceEntityRepository
         return $stmt->fetchAll();
     }
 
-    public function affUser($data){
-        // 17 98
-        // $rawSql = "SELECT *
-        //             FROM (profil JOIN profil_user ON profil_user.profil_id = profil.id)
-        //             JOIN user ON user.id = profil_user.user_id
-        //             JOIN friend ON user.id = friend.user_id
-        //             WHERE (friend.user_id = $data OR friend.friend_id = $user)
-        //             AND friend.is_friend = 1";
-        $rawSql = "SELECT * FROM profil
-                    JOIN friend ON profil.id = friend.friend_id
+    public function affUser($user, $data){
+        // DARK
+        // profil 98 user 17
+        // $user     $data
+        // BEN
+        // profil 97 user 16
+        // $user     $data
+        $rawSql = "SELECT * FROM friend
                     WHERE (friend.user_id = $data)
+                    OR (friend.friend_id = $user)
                     AND friend.is_friend = 1";
         $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
         $stmt->execute([$data]);
+        return $stmt->fetchAll();
+    }
+
+    public function findJoinFriend($id, $user){
+        $rawSql = "SELECT *, user.id
+                    FROM (profil JOIN profil_user ON profil_user.profil_id = profil.id)
+                    JOIN user ON user.id = profil_user.user_id
+                    JOIN friend ON profil.id = friend.friend_id
+                    WHERE (friend.friend_id = $id
+                    OR friend.user_id = $user)
+                    AND friend.is_friend = 1
+                    AND profil_user.user_id != $user";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        $stmt->execute([$id, $user]);
         return $stmt->fetchAll();
     }
 }

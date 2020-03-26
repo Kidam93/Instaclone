@@ -52,7 +52,6 @@ class User extends AbstractController{
         //
         if(!empty($this->friendRepo->findFriendId($id))){
             if(!empty($this->friendRepo->findFriendUser($myId))){
-                // LOG IS MY PROFIL ?
                 $existing = true;
                 if(!empty($this->friendRepo->findIsFriend((int)$id, $myId))){
                     $isFriend = (int)$this->friendRepo->findIsFriend((int)$id, $myId)[0]['is_friend'];
@@ -77,14 +76,20 @@ class User extends AbstractController{
         if(!empty($aff)){
             $aff = (int)$aff[0]['is_friend'];
             if($aff === 1){
+                $wallData = $this->userRepo->findWall($myFriend);
                 return $this->render("user/friend.html.twig", [
                     'profil' => $profil,
                     'isFriend' => $isFriend ?? null,
                     'existing' => $existing ?? null,
                     'add' => $add ?? null,
-                    'myProfil' => $myProfil ?? null
+                    'myProfil' => $myProfil ?? null,
+                    'wallData' => $wallData ?? null
                 ]);
             }
+        }
+        $me = (int)$this->profilRepo->findJoinProfil($myId)[0]['profil_id'];
+        if($me === (int)$id){
+            return $this->redirectToRoute("homeprofil");
         }
         return $this->render("user/user.html.twig", [
             'profil' => $profil,
@@ -112,6 +117,5 @@ class User extends AbstractController{
         return $this->redirectToRoute("profil.user", [
             'id' => $id
         ]);
-        // return $this->redirectToRoute("homeprofil");
     }
 }

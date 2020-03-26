@@ -87,10 +87,7 @@ class ProfilController extends AbstractController{
             $filename = $profil->getFilename();
             $friends = $this->userRepo->findJoinId($user);
         }
-        if(!empty($data && $user)){
-            $aff= $this->friendRepo->affUser($data);
-        }
-        // WALL
+        $aff = $this->friendRepo->findJoinFriend($user, $data);
         $wall = new Wall();
         $userObj = $this->getDoctrine()->getRepository(User::class)->find($this->session->get('id'));
         $form = $this->createForm(WallType::class, $wall);
@@ -107,7 +104,6 @@ class ProfilController extends AbstractController{
             return $this->redirectToRoute("homeprofil");
         }
         $wallData = $this->userRepo->findWall($this->session->get('id'));
-        // dd($wallData);
         return $this->render("profil/homeprofil.html.twig", [
             'user' => $username,
             'created' => $created,
