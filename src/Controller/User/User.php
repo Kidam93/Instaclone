@@ -5,6 +5,7 @@ use App\Entity\Friend;
 use App\Repository\UserRepository;
 use App\Repository\FriendRepository;
 use App\Repository\ProfilRepository;
+use App\Repository\ReputationRepository;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -23,17 +24,21 @@ class User extends AbstractController{
 
     private $friendRepo;
 
+    private $reputationRepo;
+
     public function __construct(SessionInterface $session, 
                                 ContainerInterface $container, 
                                 UserRepository $userRepo, 
                                 ProfilRepository $profilRepo,
-                                FriendRepository $friendRepo)
+                                FriendRepository $friendRepo,
+                                ReputationRepository $reputationRepo)
     {
         $this->session = $session;
         $this->container = $container;
         $this->userRepo = $userRepo;
         $this->profilRepo = $profilRepo;
         $this->friendRepo = $friendRepo;
+        $this->reputationRepo = $reputationRepo;
     }
 
     /**
@@ -77,13 +82,18 @@ class User extends AbstractController{
             $aff = (int)$aff[0]['is_friend'];
             if($aff === 1){
                 $wallData = $this->userRepo->findWall($myFriend);
+                $dataComments = $this->reputationRepo->findFriendComments($myFriend);
+                // dd($dataComments);
+                // dd($wallData);
                 return $this->render("user/friend.html.twig", [
                     'profil' => $profil,
                     'isFriend' => $isFriend ?? null,
                     'existing' => $existing ?? null,
                     'add' => $add ?? null,
                     'myProfil' => $myProfil ?? null,
-                    'wallData' => $wallData ?? null
+                    'wallData' => array_reverse($wallData) ?? null,
+                    'id' => $myId,
+                    'comments' => $dataComments ?? null
                 ]);
             }
         }

@@ -7,6 +7,8 @@ use App\Entity\Friend;
 use App\Entity\Profil;
 use App\Form\WallType;
 use App\Form\ProfilType;
+use App\Entity\Reputation;
+use App\Form\WallReputationType;
 use App\Repository\UserRepository;
 use App\Repository\FriendRepository;
 use App\Repository\ProfilRepository;
@@ -15,6 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Controller\Profil\Wall\WallController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Controller\Profil\Wall\WallReputationController;
+use App\Repository\ReputationRepository;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -30,17 +34,21 @@ class ProfilController extends AbstractController{
 
     private $friendRepo;
 
+    private $reputationRepo;
+
     public function __construct(SessionInterface $session, 
                                 ContainerInterface $container, 
                                 UserRepository $userRepo, 
                                 ProfilRepository $profilRepo,
-                                FriendRepository $friendRepo)
+                                FriendRepository $friendRepo,
+                                ReputationRepository $reputationRepo)
     {
         $this->session = $session;
         $this->container = $container;
         $this->userRepo = $userRepo;
         $this->profilRepo = $profilRepo;
         $this->friendRepo = $friendRepo;
+        $this->reputationRepo = $reputationRepo;
     }
 
     /**
@@ -88,6 +96,7 @@ class ProfilController extends AbstractController{
             $friends = $this->userRepo->findJoinId($user);
         }
         $aff = $this->friendRepo->findJoinFriend($user, $data);
+        // WALL
         $wall = new Wall();
         $userObj = $this->getDoctrine()->getRepository(User::class)->find($this->session->get('id'));
         $form = $this->createForm(WallType::class, $wall);
@@ -104,6 +113,9 @@ class ProfilController extends AbstractController{
             return $this->redirectToRoute("homeprofil");
         }
         $wallData = $this->userRepo->findWall($this->session->get('id'));
+        // REPUTATION
+        $dataReputation = $this->reputationRepo->findMyComments($data);
+        // dd($dataReputation);
         return $this->render("profil/homeprofil.html.twig", [
             'user' => $username,
             'created' => $created,
@@ -112,7 +124,8 @@ class ProfilController extends AbstractController{
             'friends' => $friends ?? null,
             'affs' => $aff ?? null,
             'wallData' => array_reverse($wallData),
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'comments' => $dataReputation ?? null
         ]);
     }
 

@@ -102,6 +102,30 @@
                     {{ data.comment }}
                 </p>
                 </div>
+                <form class="ml-2" action="{{ path('wall.comment', { me: id, friend: profil.id, art: data.id } ) }}" method="post">
+                    <div class="d-flex">
+                        <a class="" href="">J'aime</a>
+                        <a class="ml-2" href="">J'aime pas</a>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control mt-2" placeholder="Votre Commentaire" name="comment"></textarea>
+                    </div>
+                    <button class="btn btn-primary">Ok</button>
+                </form>
+                <div class="container mt-4">
+                {# {{ datas }} #}
+                    {% for comment in comments %}
+                        {% if data.id == comment.wall_id %}
+                        <div class="bg-light p-4 rounded">
+                            <div class="d-flex">
+                            <p><strong>{{ comment.prenom }} {{ comment.nom }}</strong></p>
+                            <p class="ml-2 text-secondary">{{ comment.date|date('d/m/Y')}}</p>
+                        </div>
+                        <p class="text-secondary">{{ comment.comments }}</p>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             {% endfor %}
         <small class="d-block text-right mt-3">
         <a href="#">All updates</a>

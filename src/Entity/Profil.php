@@ -56,10 +56,16 @@ class Profil
      */
     private $walls;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Reputation", mappedBy="profils")
+     */
+    private $reputations;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->walls = new ArrayCollection();
+        $this->reputations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -188,6 +194,34 @@ class Profil
         if ($this->walls->contains($wall)) {
             $this->walls->removeElement($wall);
             $wall->removeProfilComment($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Reputation[]
+     */
+    public function getReputations(): Collection
+    {
+        return $this->reputations;
+    }
+
+    public function addReputation(Reputation $reputation): self
+    {
+        if (!$this->reputations->contains($reputation)) {
+            $this->reputations[] = $reputation;
+            $reputation->addProfil($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReputation(Reputation $reputation): self
+    {
+        if ($this->reputations->contains($reputation)) {
+            $this->reputations->removeElement($reputation);
+            $reputation->removeProfil($this);
         }
 
         return $this;
