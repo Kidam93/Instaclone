@@ -58,6 +58,10 @@ class ReputationRepository extends ServiceEntityRepository
                     ON reputation.id = reputation_profil.reputation_id
                     JOIN profil
                     ON profil.id = reputation_profil.profil_id
+                    JOIN profil_user
+                    ON profil_user.profil_id = profil.id
+                    JOIN user
+                    ON user.id = profil_user.user_id
                     WHERE reputation.user_id = $friendId";
         $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
         $stmt->execute([$friendId]);
@@ -73,9 +77,22 @@ class ReputationRepository extends ServiceEntityRepository
                     ON reputation.id = reputation_profil.reputation_id
                     JOIN profil
                     ON profil.id = reputation_profil.profil_id
+
+                    -- JOIN profil_user
+                    -- ON profil_user.profil_id = profil.id
+                    -- JOIN user
+                    -- ON user.id = profil_user.user_id
+
                     WHERE reputation.user_id = $user";
         $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
         $stmt->execute([$user]);
         return $stmt->fetchAll();
+    }
+
+    public function deleteComment($comment){
+        $rawSql = "DELETE FROM reputation
+                    WHERE reputation.id = $comment";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        return $stmt->execute([$comment]);
     }
 }

@@ -46,6 +46,17 @@ class WallReputationController extends AbstractController{
     }
 
     /**
+     * @Route("/wall/comment-delete-{friend}-{comment}", name="wall.comment.friend.delete")
+     */
+    public function CommentsFriendsDelete($friend, $comment, Request $request){
+        $id = $this->session->get('id');
+        $this->reputationRepo->deleteComment($comment);
+        return $this->redirectToRoute("profil.user", [
+            'id' => (int)$friend
+        ]);
+    }
+
+    /**
      * @Route("/wall/comment-{me}-{friend}-{art}", name="wall.comment")
      */
     public function Comments($me, $friend, $art, Request $request){
@@ -54,10 +65,6 @@ class WallReputationController extends AbstractController{
             $profil = (int)$this->profilRepo->findJoinProfil($id)[0]['profil_id'];
         }
         $comment = $request->request->get('comment');
-        // BEN
-        // $id = 16 | $profil = 97
-        // LAURENCE
-        // $friendId = 18 | $friend = 99
         if(!empty($this->userRepo->findMyFriend($friend))){
             $friendId = (int)$this->userRepo->findMyFriend($friend)[0]['user_id'];
         }
@@ -76,5 +83,19 @@ class WallReputationController extends AbstractController{
                 'id' => $friend
             ]);
         }
+    }
+
+    /**
+     * @Route("/wall/comment-delete-{comment}", name="wall.comment.delete")
+     */
+    public function CommentsDelete($comment, Request $request){
+        $id = $this->session->get('id');
+        $this->reputationRepo->deleteComment($comment);
+        if(!empty($this->userRepo->selectProfil($id))){
+            $profil = (int)$this->userRepo->selectProfil($id)[0]['profil_id'];
+        }
+        return $this->redirectToRoute("profil.user", [
+            'id' => $profil
+        ]);
     }
 }

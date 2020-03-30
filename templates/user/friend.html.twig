@@ -103,10 +103,18 @@
                 </p>
                 </div>
                 <form class="ml-2" action="{{ path('wall.comment', { me: id, friend: profil.id, art: data.id } ) }}" method="post">
-                    <div class="d-flex">
-                        <a class="" href="">J'aime</a>
-                        <a class="ml-2" href="">J'aime pas</a>
+                    {# LIKE #}
+                    <div class="d-flex justify-content-between">
+                        <div class="">
+                            <a class="" href=""><i class="fas fa-heart"></i></a>
+                            <a class="ml-2" href=""><i class="fas fa-heart-broken"></i></a>
+                        </div>
+                        <div class="d-flex mt-2" style="width: 100px;">
+                            <p style="height: 15px; width: 80%; background-color: rgb(14, 116, 250);"></p>
+                            <p style="height: 15px; width: 20%; background-color: rgb(184, 18, 18);"></p>
+                        </div>
                     </div>
+                    {# ENDLIKE #}
                     <div class="form-group">
                         <textarea class="form-control mt-2" placeholder="Votre Commentaire" name="comment"></textarea>
                     </div>
@@ -122,6 +130,13 @@
                             <p class="ml-2 text-secondary">{{ comment.date|date('d/m/Y')}}</p>
                         </div>
                         <p class="text-secondary">{{ comment.comments }}</p>
+                        {% if id == comment.id %}
+                        <div class="d-flex">
+                            <p></p>
+                            <a href="{{ path('wall.comment.friend.delete', { friend: profil.id, comment: comment.reputation_id }) }}">Supprimer</a>
+                            {# <a href="{{ path('wall.comment.delete', { comment: comment.reputation_id }) }}">Supprimer</a> #}
+                        </div>
+                        {% endif %}
                         </div>
                         {% endif %}
                     {% endfor %}

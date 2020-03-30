@@ -83,8 +83,6 @@ class User extends AbstractController{
             if($aff === 1){
                 $wallData = $this->userRepo->findWall($myFriend);
                 $dataComments = $this->reputationRepo->findFriendComments($myFriend);
-                // dd($dataComments);
-                // dd($wallData);
                 return $this->render("user/friend.html.twig", [
                     'profil' => $profil,
                     'isFriend' => $isFriend ?? null,
